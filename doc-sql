@@ -1,0 +1,53 @@
+---------2018-11-02---------------------------------------------------------------------------
+--查询缺省启动的任务
+select client_name,task_name,status from dba_autotask_task;
+--alert日志文件
+ show parameter background_dump_dest
+-- alert文件新的参数
+show parameter diag;
+-- @WbResult 跟踪诊断的相关信息
+select * from v$diag_info;
+
+d--得到instance name
+show parameter instance_name;
+-- 检查口令文件
+show parameter pass;
+--查看口令文件用户试图
+select * from v$pwfile_users;
+-------2018-11-05---------------------------------------------------------------------------
+-- 得到oracle版本
+select * from v$version where rownum<2
+-- 创建用户
+create user eygle identified by eygle;
+create user eygle2 identified by eygle
+default tablespace users
+temporary tablespace temp;
+-- 看用户的表空间
+-- 注意where条件中的username必须是大写
+select username, default_tablespace,temporary_tablespace
+from dba_users where username='EYGLE';
+select username, default_tablespace,temporary_tablespace
+from dba_users where username='EYGLE2';
+
+-- 不能删除使用中的缺省表空间
+drop tablespace users;
+-- 删除用户
+drop user eygle cascade;
+drop user eygle2 cascade;
+-- 锁定用户
+alter user eygle account lock;
+alter user eygle2 account lock;
+-- 解锁用户
+alter user eygle account unlock;
+alter user eygle2 account unlock;
+-- 检索锁定的用户
+select username,account_status from dba_users where account_status <> 'OPEN';
+-- 查询口令失败次数限制
+select * from dba_profiles where resource_name ='FAILED_LOGIN_ATTEMPTS';
+-- 更改查询口令失败次数限制
+alter profile default limit FAILED_LOGIN_ATTEMPTS unlimited;
+-- 查询LOGIN失败记录次数
+select name, lcount from user$ where name = 'EYGLE'
+-- 设定自动表示explain ，只是在SQLPLUS里面好用，而且设定完了以后， show parameter xxx的表示不会把结果表示出来了
+SET AUTOTRACE TRACE EXPLAIN
+SELECT COUNT(*) FROM DBA_USERS;
